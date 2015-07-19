@@ -45,7 +45,7 @@ def scrape_term(id, url)
       name = "Tina Rose Muña Barnes" if name =~ /Tina.*Barnes/
     rescue
       puts "problem with #{name} = #{name.encoding}"
-      next
+      name = "Tina Rose Muña Barnes" 
     end
     data = { 
       name: name.tidy.gsub('Honorable ',''),
