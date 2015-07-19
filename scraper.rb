@@ -39,8 +39,11 @@ def scrape_term(id, url)
   noko = noko_for(url)
 
   noko.css('table.gallerytext').xpath('tr[.//span[@class="picturename"]]').each do |tr|
+    name = tr.css('span.picturename').text
+    # Multiple broken variations on official site
+    name = "Tina Rose Muña Barnes" if name =~ /Tina.*Barnes/
     data = { 
-      name: tr.css('span.picturename').text.tidy.gsub('Honorable ',''),
+      name: name.tidy.gsub('Honorable ',''),
       image: tr.css('img.Galborder/@src').text,
       phone: tr.xpath('.//text()[contains(.,"Ph.:")]').text.tidy[/Ph.:\s*(.*)$/, 1].strip,
       fax: tr.xpath('.//text()[contains(.,"Fax:")]').text.to_s.tidy[/Fax:\s*(.*)$/, 1].to_s.strip,
