@@ -11,6 +11,12 @@ require 'pry'
 require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
+class String
+  def tidy
+    self.gsub(/[[:space:]]+/, ' ').strip
+  end
+end
+
 terms = { 
   '33' => 'http://www.guamlegislature.com/senators_33rd.htm',
   '32' => 'http://www.guamlegislature.com/senators_32nd.htm',
@@ -33,12 +39,11 @@ def scrape_term(id, url)
   noko = noko_for(url)
 
   noko.css('table.gallerytext').xpath('tr[.//span[@class="picturename"]]').each do |tr|
-    # party, party_id = party_info ( td.xpath('preceding::strong[1]').text )
     data = { 
-      name: tr.css('span.picturename').text.gsub('Honorable ',' ').strip,
+      name: tr.css('span.picturename').text.tidy.gsub('Honorable ',''),
       image: tr.css('img.Galborder/@src').text,
-      phone: tr.xpath('.//text()[contains(.,"Ph.:")]').text.gsub(/[[:space:]]+/, ' ')[/Ph.:\s*(.*)$/, 1].strip,
-      fax: tr.xpath('.//text()[contains(.,"Fax:")]').text.to_s.gsub(/[[:space:]]+/, ' ')[/Fax:\s*(.*)$/, 1].to_s.strip,
+      phone: tr.xpath('.//text()[contains(.,"Ph.:")]').text.tidy[/Ph.:\s*(.*)$/, 1].strip,
+      fax: tr.xpath('.//text()[contains(.,"Fax:")]').text.to_s.tidy[/Fax:\s*(.*)$/, 1].to_s.strip,
       email: tr.css('a[href*="mailto:"]/@href').text.gsub('mailto:',''),
       term: id,
       source: url,
