@@ -43,7 +43,6 @@ def scrape_term(id, url)
       name = tr.css('span.picturename').text
       # Multiple broken variations on official site
       name = "Tina Rose Muña Barnes" if name =~ /Tina.*Barnes/
-      puts "no problem with #{name} = #{name.encoding}"
     rescue
       puts "problem with #{name} = #{name.encoding}"
       next
@@ -68,7 +67,7 @@ def scrape_term(id, url)
     end
 
     data[:image] = URI.join(url, URI.escape(data[:image])).to_s unless data[:image].to_s.empty?
-    puts data
+    # puts data
     ScraperWiki.save_sqlite([:name, :term], data)
   end
 end
